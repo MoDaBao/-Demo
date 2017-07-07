@@ -58,7 +58,14 @@
     logoMaskAnimation.values = @[[NSValue valueWithCGRect:initalBounds], [NSValue valueWithCGRect:secondBounds], [NSValue valueWithCGRect:finalBounds]];
     logoMaskAnimation.keyTimes = @[@0, @.5, @1];
     logoMaskAnimation.timingFunctions = @[[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut], [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut], [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut]];// 设置动画的速度变化
-    logoMaskAnimation.removedOnCompletion = NO;//YES回到最初动画开始位置 || NO 动画结束的位置在哪就在那
+    logoMaskAnimation.removedOnCompletion = NO;// “需要将其 removedOnCompletion 设置为 false 才行,不然 fillMode 将不起作用。
+    /*
+     kCAFillModeRemoved 这个是默认值，也就是说当动画开始前和动画结束后，动画对layer都没有影响，动画结束后，layer会恢复到之前的状态。
+     kCAFillModeForwards 当动画结束后，layer会一直保持着动画最后的状态。
+     kCAFillModeBackwards 这个和 kCAFillModeForwards 是相对的，就是在动画开始前，你只要将动画加入了一个layer，layer便立即进入动画的初始状态并等待动画开始。你可以这样设定测试代码，将一个动画加入一个layer的时候延迟5秒执行。然后就会发现在动画没有开始的时候，只要动画被加入了 layer , layer 便处于动画初始状态， 动画结束后，layer 也会恢复到之前的状态。
+     kCAFillModeBoth 理解了上面两个，这个就很好理解了，这个其实就是上面两个的合成。动画加入后立即开始，layer便处于动画初始状态，动画结束后layer保持动画最后的状态”
+     摘录来自: 杨骑滔（KittenYang）. “A GUIDE TO IOS ANIMATION”。 iBooks.
+     */
     logoMaskAnimation.fillMode = kCAFillModeForwards;// kCAFillModeForwards动画开始之后layer的状态将保持在动画的最后一帧，而removedOnCompletion的默认属性值是 YES，所以为了使动画结束之后layer保持结束状态，应将removedOnCompletion设置为NO
     [self.navigationController.view.layer.mask addAnimation:logoMaskAnimation forKey:@"logoMaskAnimation"];
     
